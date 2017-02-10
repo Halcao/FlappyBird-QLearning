@@ -28,17 +28,15 @@ class ViewController: UIViewController {
             self.view.addSubview(gl.groundView)
             self.view.addSubview(gl.scoreLabel)
         
+        let slider = UISlider(frame: CGRect(x: 20, y: 500, width: 300, height: 30))
+        slider.minimumValue = 0.0
+        slider.maximumValue = 8.0
+    
+        
     // Do any additional setup after loading the view, typically from a nib.
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        for touch in touches {
-//            print(touch.location(in: self.view))
-//            //self.gl.bird.frame = CGRect(origin: touch.location(in: self.view), size: CGSize(width: 40, height: 40))
-//            // self.gl.bird.y -= 40
-//
-//        }
-        
         gl.touchesEnd()
     }
     

@@ -164,6 +164,7 @@ class Agent {
             if newState.isCleared {
                 r += 8000
             }
+            // print("Alive, reward " + String(r))
             return Int(r)
         }
     }
