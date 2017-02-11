@@ -17,9 +17,6 @@ class ViewController: UIViewController {
         
             bgd.image = #imageLiteral(resourceName: "background")
             self.view.addSubview(bgd)
-
-            //self.view.addSubview(bird)
-            // let gl = GameLogic()
         
             self.view.addSubview(gl.pipe1)
             self.view.addSubview(gl.pipe2)
@@ -27,11 +24,11 @@ class ViewController: UIViewController {
             self.view.addSubview(gl.bird)
             self.view.addSubview(gl.groundView)
             self.view.addSubview(gl.scoreLabel)
+            self.view.addSubview(gl.slider)
         
-        let slider = UISlider(frame: CGRect(x: 20, y: 500, width: 300, height: 30))
-        slider.minimumValue = 0.0
-        slider.maximumValue = 8.0
-    
+            self.view.addSubview(gl.resetBtn)
+            self.view.addSubview(gl.saveBtn)
+            self.view.addSubview(gl.loadBtn)
         
     // Do any additional setup after loading the view, typically from a nib.
     }

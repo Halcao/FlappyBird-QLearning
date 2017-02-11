@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36046E7B1E4F67E100C0685B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36046E7A1E4F67E100C0685B /* Assets.xcassets */; };
 		363C19CD1E4A041900A4324E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 363C19CC1E4A041900A4324E /* AppDelegate.swift */; };
 		363C19CF1E4A041900A4324E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 363C19CE1E4A041900A4324E /* ViewController.swift */; };
 		363C19D21E4A041900A4324E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 363C19D01E4A041900A4324E /* Main.storyboard */; };
-		363C19D41E4A041900A4324E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 363C19D31E4A041900A4324E /* Assets.xcassets */; };
 		363C19D71E4A041900A4324E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 363C19D51E4A041900A4324E /* LaunchScreen.storyboard */; };
 		363C19DF1E4A043800A4324E /* Bird.swift in Sources */ = {isa = PBXBuildFile; fileRef = 363C19DE1E4A043800A4324E /* Bird.swift */; };
 		363C19E11E4A044400A4324E /* Pipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 363C19E01E4A044400A4324E /* Pipe.swift */; };
@@ -19,11 +19,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		36046E7A1E4F67E100C0685B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		363C19C91E4A041900A4324E /* FlappyBird.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlappyBird.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		363C19CC1E4A041900A4324E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		363C19CE1E4A041900A4324E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		363C19D11E4A041900A4324E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		363C19D31E4A041900A4324E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		363C19D61E4A041900A4324E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		363C19D81E4A041900A4324E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		363C19DE1E4A043800A4324E /* Bird.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bird.swift; sourceTree = "<group>"; };
@@ -68,8 +68,8 @@
 				365A739D1E4AF63C00CABE52 /* GameLogic.swift */,
 				363C19DE1E4A043800A4324E /* Bird.swift */,
 				3646B6C21E4B693500598107 /* QLearner.swift */,
+				36046E7A1E4F67E100C0685B /* Assets.xcassets */,
 				363C19D01E4A041900A4324E /* Main.storyboard */,
-				363C19D31E4A041900A4324E /* Assets.xcassets */,
 				363C19D51E4A041900A4324E /* LaunchScreen.storyboard */,
 				363C19D81E4A041900A4324E /* Info.plist */,
 			);
@@ -108,6 +108,7 @@
 				TargetAttributes = {
 					363C19C81E4A041900A4324E = {
 						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = W938R6K2AH;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -136,7 +137,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				363C19D71E4A041900A4324E /* LaunchScreen.storyboard in Resources */,
-				363C19D41E4A041900A4324E /* Assets.xcassets in Resources */,
+				36046E7B1E4F67E100C0685B /* Assets.xcassets in Resources */,
 				363C19D21E4A041900A4324E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,6 +275,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = W938R6K2AH;
 				INFOPLIST_FILE = FlappyBird/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hal.FlappyBird;
@@ -286,6 +288,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = W938R6K2AH;
 				INFOPLIST_FILE = FlappyBird/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hal.FlappyBird;
