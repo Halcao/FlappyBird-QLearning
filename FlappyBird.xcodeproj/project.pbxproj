@@ -16,6 +16,7 @@
 		363C19E11E4A044400A4324E /* Pipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 363C19E01E4A044400A4324E /* Pipe.swift */; };
 		3646B6C31E4B693500598107 /* QLearner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3646B6C21E4B693500598107 /* QLearner.swift */; };
 		365A739E1E4AF63C00CABE52 /* GameLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365A739D1E4AF63C00CABE52 /* GameLogic.swift */; };
+		369655FF1E508D830093E285 /* StateActionSetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369655FE1E508D830093E285 /* StateActionSetModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		363C19E01E4A044400A4324E /* Pipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pipe.swift; sourceTree = "<group>"; };
 		3646B6C21E4B693500598107 /* QLearner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QLearner.swift; sourceTree = "<group>"; };
 		365A739D1E4AF63C00CABE52 /* GameLogic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameLogic.swift; sourceTree = "<group>"; };
+		369655FE1E508D830093E285 /* StateActionSetModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateActionSetModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				363C19E01E4A044400A4324E /* Pipe.swift */,
 				365A739D1E4AF63C00CABE52 /* GameLogic.swift */,
 				363C19DE1E4A043800A4324E /* Bird.swift */,
+				369655FE1E508D830093E285 /* StateActionSetModel.swift */,
 				3646B6C21E4B693500598107 /* QLearner.swift */,
 				36046E7A1E4F67E100C0685B /* Assets.xcassets */,
 				363C19D01E4A041900A4324E /* Main.storyboard */,
@@ -152,6 +155,7 @@
 				363C19CF1E4A041900A4324E /* ViewController.swift in Sources */,
 				363C19DF1E4A043800A4324E /* Bird.swift in Sources */,
 				363C19CD1E4A041900A4324E /* AppDelegate.swift in Sources */,
+				369655FF1E508D830093E285 /* StateActionSetModel.swift in Sources */,
 				3646B6C31E4B693500598107 /* QLearner.swift in Sources */,
 				365A739E1E4AF63C00CABE52 /* GameLogic.swift in Sources */,
 				363C19E11E4A044400A4324E /* Pipe.swift in Sources */,

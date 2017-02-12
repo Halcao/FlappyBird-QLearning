@@ -60,6 +60,12 @@ class Bird: UIView {
         }
     }
     
+    func jump(at speed: Double) {
+        speedY = speed
+        isJumping = true
+        frame = CGRect(origin: CGPoint(x: x, y: y), size: CGSize(width: 40, height: 40))
+    }
+    
     func update() {
         self.frame = CGRect(x: x, y: y, width: width, height: height)
     }

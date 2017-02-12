@@ -47,10 +47,10 @@ class GameLogic {
     let groundView = UIImageView(image: #imageLiteral(resourceName: "ground"))
     let scoreLabel = UILabel()
     let slider = UISlider()
-    let resetBtn = UIButton(type: .system)
-    let saveBtn = UIButton(type: .system)
-    let loadBtn = UIButton(type: .system)
     let maxLabel = UILabel()
+    let sw = UISwitch() // AI Switch
+    let tipLabel = UILabel()
+
 
     // objects
     var bird = Bird(width: 40, height: 40)
@@ -67,11 +67,13 @@ class GameLogic {
     var gameOver = false
     var isClear = false
     var isCollision = false
-    
+
+    var isPaused = false
+    var enableAI = false
     var oldState = State()
     var newState = State()
     var up = Set<State>()
-    
+
     var dx = 0.0
     var dy = 0.0
     
@@ -83,10 +85,14 @@ class GameLogic {
         displayLink = CADisplayLink(target: self, selector: #selector(run))
         displayLink.preferredFramesPerSecond = Int(FPS)
         displayLink.add(to: .current, forMode: .defaultRunLoopMode)
-        
-        
-        groundView.frame = CGRect(x: 0, y: 4*UIScreen.main.bounds.size.height/5, width: UIScreen.main.bounds.size.width+GROUND_OFFSET, height: UIScreen.main.bounds.size.height/5)
 
+        initViews()
+        gameInit()
+    }
+    
+    func initViews() {
+        groundView.frame = CGRect(x: 0, y: 4*UIScreen.main.bounds.size.height/5, width: UIScreen.main.bounds.size.width+GROUND_OFFSET, height: UIScreen.main.bounds.size.height/5)
+        
         slider.frame = CGRect(x: 20, y: UIScreen.main.bounds.size.height - GROUND_HEIGHT, width: 300, height: 30)
         slider.minimumValue = 1.0
         slider.maximumValue = 8.0
@@ -96,55 +102,18 @@ class GameLogic {
         
         scoreLabel.font = UIFont.boldSystemFont(ofSize: 50)
         scoreLabel.textColor = UIColor.white
-        maxLabel.frame = CGRect(x: 20, y: UIScreen.main.bounds.size.height - GROUND_HEIGHT+70, width: 20, height: 30)
+        maxLabel.frame = CGRect(x: 220, y: UIScreen.main.bounds.size.height - GROUND_HEIGHT+60, width: 40, height: 30)
         
+        let base = UIScreen.main.bounds.size.height*4.0/5.0 + 70
+        tipLabel.text = "Enable AI"
+        tipLabel.sizeToFit()
+        tipLabel.center = CGPoint(x: tipLabel.bounds.size.width/2+20 , y: base)
+        sw.center = CGPoint(x: tipLabel.bounds.size.width + 60, y: base)
+    }
+    
+    func resetBtnTapped() {
         gameInit()
-        initViews()
-    }
-    
-    func initViews() {
-        
-        //resetBtn.titleLabel?.text = "reset"
-        let base = UIScreen.main.bounds.size.height - GROUND_HEIGHT
-        resetBtn.setTitle("reset", for: .normal)
-        resetBtn.sizeToFit()
-        resetBtn.center = CGPoint(x: 20, y: base+70)
-        resetBtn.addTarget(self, action: #selector(GameLogic.resetBtnTapped), for: .touchUpInside)
-        saveBtn.setTitle("save", for: .normal)
-        saveBtn.sizeToFit()
-        saveBtn.center = CGPoint(x: 20+120, y: base+70)
-        saveBtn.addTarget(self, action: #selector(GameLogic.saveBtnTapped), for: .touchUpInside)
-        loadBtn.setTitle("load", for: .normal)
-        loadBtn.sizeToFit()
-        loadBtn.center = CGPoint(x: 20+240, y: base+70)
-        loadBtn.addTarget(self, action: #selector(GameLogic.loadBtnTapped), for: .touchUpInside)
-
-    }
-    
-    @objc func resetBtnTapped() {
-        gameInit()
-        agent = Agent()
-        isCollision = false
-        isClear = false
-        gameOver = false
-        oldState = State()
-        oldState.x = 1000
-        up.removeAll()
-    }
-    
-    @objc func saveBtnTapped() {
-        UserDefaults.standard.setValue(agent.Q.history, forKeyPath: "FIXED_GREAT_AGENT")
-    }
-    
-    @objc func loadBtnTapped() {
-        gameInit()
-        let Qhistory = UserDefaults.standard.object(forKey: "FIXED_GREAT_AGENT") as! Dictionary<State, ActionSet>
-        agent.Q.history = Qhistory
-        isCollision = false
-        isClear = false
-        gameOver = false
-        oldState = State()
-        oldState.x = 1000
+        agent.Q.history.removeAll()
         up.removeAll()
     }
     
@@ -158,21 +127,30 @@ class GameLogic {
         score = 0
         distance = 0
         bird.speedY = 0
-        oldState.x = 1000
         isClear = false
+        groundView.frame = CGRect(x: 0, y: 4*GROUND_HEIGHT, width: UIScreen.main.bounds.size.width+GROUND_OFFSET, height: GROUND_HEIGHT)
+        isCollision = false
+        isClear = false
+        gameOver = false
     }
     
     /**
      the function will run $FPS times per second
      */
+    
     @objc func run() {
+        guard isPaused == false else {
+            return
+        }
+        
         GameLogic.SPEED = Double(slider.value)
+        enableAI = sw.isOn
         
         scoreLabel.text = String(score)
         scoreLabel.sizeToFit()
         scoreLabel.frame = CGRect(x: (UIScreen.main.bounds.size.width-scoreLabel.frame.size.width)/2, y: 100, width: scoreLabel.frame.size.width, height: scoreLabel.frame.size.height)
         
-        maxLabel.text = "max: \(score)"
+        maxLabel.text = "max: \(max)"
         maxLabel.sizeToFit()
         
         if bird.left < pipe1.right && pipe1.pos < pipe2.pos {
@@ -190,6 +168,7 @@ class GameLogic {
         }
     
         isClear = false
+        // if get score
         if Int((distance - 300+100-pipe1.width+PIPE_INTERVAL)/PIPE_INTERVAL) - score == 1 {
             score += 1
             isClear = true
@@ -199,42 +178,36 @@ class GameLogic {
             print("current score: \(score)")
         }
 
-        // in the first case
-        if oldState.x == 1000 {
-            oldState = State(x: dx, y: dy, isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
-        } else {
-            newState = State(x: dx, y: dy, isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
+        if enableAI {
+            if agent.Q.history.keys.count == 0 {
+                oldState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
+                agent.Q.add(state: &oldState)
+            }
+            newState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
+            // new case, learn it
             if !newState.isEqual(to: oldState) {
                 agent.learn(action: action, oldState: oldState, newState: &newState)
                 up.insert(oldState)
             }
             oldState = newState
+            // if the agent decides to jump
+            action = agent.decide(state: &oldState , bird: bird)
+            if action == Action.JUMP {
+                bird.jump(at: JUMP_SPEED)
+            }
         }
 
         
-        guard gameOver == false else {
-            // if game is over
-            // TODO: game Over
-            groundView.frame = CGRect(x: 0, y: 4*GROUND_HEIGHT, width: UIScreen.main.bounds.size.width+GROUND_OFFSET, height: GROUND_HEIGHT)
-            
+        if gameOver {
+            print("gameOver")
+            if enableAI {
+                print("states: \(agent.Q.history.count) score: \(score) unique: \(up.count) max: \(max)")
+            }
+            // TODO: gameOverScene()
             gameInit()
-            isCollision = false
-            isClear = false
-            gameOver = false
-            oldState = State()
-            oldState.x = 1000
-            print("unique states: \(agent.Q.history.count) score: \(score) unique: \(up.count) max: \(max)")
             return
         }
         
-        
-        // if the agent decides to jump
-        action = agent.decide(state: &oldState , bird: bird)
-        if action == Action.JUMP {
-            bird.speedY = JUMP_SPEED
-            self.bird.isJumping = true
-            self.bird.frame = CGRect(origin: CGPoint(x: self.bird.x, y: self.bird.y), size: CGSize(width: 40, height: 40))
-        }
         
         // detect the jumping state
         if bird.speedY < 0 {
@@ -252,7 +225,6 @@ class GameLogic {
         // birdRotate()
     }
     
-    
     // TODO: finish the rotating action
     func birdRotate() {
         let distance = Double(4*GROUND_HEIGHT) - bird.y
@@ -267,10 +239,10 @@ class GameLogic {
         distance += PIPE_SPEED*dt
         if pipe1.right < 0 && pipe2.right > 0 {
             pipe1.pos = pipe2.pos + PIPE_INTERVAL
-            pipe1.high = 180.0+Double(arc4random_uniform(80))
+            pipe1.high = Double(GAP_MIDDLE_HEIGHT)+Double(arc4random_uniform(80))
         } else if pipe2.right < 0 && pipe1.right > 0 {
             pipe2.pos = pipe1.pos + PIPE_INTERVAL
-            pipe2.high = 180.0+Double(arc4random_uniform(80))
+            pipe2.high = Double(GAP_MIDDLE_HEIGHT)+Double(arc4random_uniform(80))
         }
 
     }
@@ -282,14 +254,6 @@ class GameLogic {
             groundView.frame = CGRect(x: 0, y: 4*GROUND_HEIGHT, width: UIScreen.main.bounds.size.width+GROUND_OFFSET, height: GROUND_HEIGHT)
         }
 
-    }
-    
-    
-    // the jump action
-    func touchesEnd() {
-        bird.speedY = JUMP_SPEED
-        self.bird.isJumping = true
-        self.bird.frame = CGRect(origin: CGPoint(x: self.bird.x, y: self.bird.y), size: CGSize(width: 40, height: 40))
     }
     
     /**
@@ -325,5 +289,68 @@ class GameLogic {
         }
         
         
+    }
+    
+    
+    func saveData() {
+        let data = NSMutableData()
+        //申明一个归档处理对象
+        let archiver = NSKeyedArchiver(forWritingWith: data)
+        //将lists以对应Checklist关键字进行编码
+        
+        var array = [StateActionSetModel]()
+        for key in agent.Q.history.keys {
+            let model = StateActionSetModel(with: key, actionSet: agent.Q.history[key]!)
+            array.append(model)
+        }
+        archiver.encode(array, forKey: "model_array")
+        //编码结束
+        archiver.finishEncoding()
+        //数据写入
+        data.write(toFile: dataFilePath(), atomically: true)
+    }
+    
+    //读取数据
+    func loadData() {
+        resetBtnTapped()
+        //获取本地数据文件地址
+        let path = self.dataFilePath()
+        //声明文件管理器
+        let defaultManager = FileManager()
+        //通过文件地址判断数据文件是否存在
+        if defaultManager.fileExists(atPath: path) {
+            //读取文件数据
+            let url = URL(fileURLWithPath: path)
+            let data = try! Data(contentsOf: url)
+            //解码器
+            let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
+            //通过归档时设置的关键字Checklist还原lists
+            let array = unarchiver.decodeObject(forKey: "model_array") as! Array<StateActionSetModel>
+            //var history = Dictionary<State, ActionSet>()
+            for model in array {
+                agent.Q.history[model.getState()] = model.getActionSet()
+                //history[model.getState()] = model.getActionSet()
+            }
+//            agent.Q.history = unarchiver.decodeObject(forKey: "history") as! Dictionary<State, ActionSet>
+            //agent.Q.history = history
+            //结束解码
+            unarchiver.finishDecoding()
+            self.agent.Q.add(state: &oldState)
+            oldState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
+            agent.Q.add(state: &oldState)
+        }
+    }
+    
+    //获取沙盒文件夹路径
+    func documentsDirectory() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory,
+                                                        .userDomainMask, true)
+        let documentsDirectory = paths.first!
+        return documentsDirectory
+    }
+    
+    //获取数据文件地址
+    func dataFilePath() -> String{
+        return self.documentsDirectory().appendingFormat("/userList.plist")
     }
 }

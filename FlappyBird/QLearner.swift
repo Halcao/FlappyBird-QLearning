@@ -13,11 +13,12 @@ enum Action {
     case NOTHING
 }
 
-class ActionSet {
+class ActionSet: NSObject {
     var jump = 1.0
     var j_cnt = 0.0
     var n_cnt = 0.0
     var nothing = 1.0
+    
     func maxReward() -> Double {
         
         let jump_r = self.jump + 5.0/(self.j_cnt+1.0)
@@ -66,7 +67,7 @@ class ActionSet {
 }
 
 
-class State: NSObject {
+class State: NSObject, NSCopying {
 
     var x = 0
     var y = 0
@@ -76,10 +77,15 @@ class State: NSObject {
     var isCleared = false
     var py = 0
     // py: three segments
-    convenience init(x: Double, y: Double, isJumping: Bool, isDead: Bool, py: Int, isCleared: Bool, isCollision: Bool) {
-        self.init()
-        self.x = Int(x)
-        self.y = Int(y)
+    
+    override init() {
+        
+    }
+    
+    init(x: Int, y: Int, isJumping: Bool, isDead: Bool, py: Int, isCleared: Bool, isCollision: Bool) {
+        super.init()
+        self.x = x
+        self.y = y
         self.isJumping = isJumping
         self.isDead = isDead
         self.isCollision = isCollision
@@ -92,6 +98,10 @@ class State: NSObject {
         } else if py < 512 {
             self.py = 2
         }
+    }
+        
+    func copy(with zone: NSZone? = nil) -> Any {
+        return State(x: x, y: x, isJumping: isJumping, isDead: isDead, py: py, isCleared: isCleared, isCollision: isCollision)
     }
     
     func isEqual(to other: State) -> Bool {
@@ -106,16 +116,6 @@ class State: NSObject {
         }
         return false
     }
-//    public static func ==(lhs: State, rhs: State) -> Bool {
-//        if lhs.x == rhs.x &&
-//            lhs.y == rhs.y &&
-//            lhs.isJumping == rhs.isJumping &&
-//            lhs.isDead == rhs.isDead &&
-//            lhs.py == rhs.py {
-//            return true
-//        }
-//        return false
-//    }
 }
 
 class QArray {
