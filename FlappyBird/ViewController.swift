@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     let alertController = UIAlertController(title: "Flappy", message: "", preferredStyle: .actionSheet)
-    let gl = GameLogic()
+    var gl = GameLogic()
     override func viewDidLoad() {
         super.viewDidLoad()
             let bgd = UIImageView(frame: self.view.bounds)

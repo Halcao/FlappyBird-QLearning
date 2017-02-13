@@ -79,7 +79,7 @@ class State: NSObject, NSCopying {
     // py: three segments
     
     override init() {
-        
+        super.init()
     }
     
     init(x: Int, y: Int, isJumping: Bool, isDead: Bool, py: Int, isCleared: Bool, isCollision: Bool) {
@@ -109,13 +109,27 @@ class State: NSObject, NSCopying {
             self.y == other.y &&
             self.isJumping == other.isJumping &&
             self.isDead == other.isDead &&
-            self.isCleared == other.isCleared &&
-            self.isCollision == other.isCollision &&
+            //           self.isCleared == other.isCleared &&
+            //           self.isCollision == other.isCollision &&
             self.py == other.py {
-                return true
+            return true
         }
         return false
     }
+    
+    func isEqual1(to other: State) -> Bool {
+        if self.x == other.x &&
+            self.y == other.y &&
+            self.isJumping == other.isJumping &&
+            self.isDead == other.isDead &&
+            //           self.isCleared == other.isCleared &&
+            //           self.isCollision == other.isCollision &&
+            self.py == other.py {
+            return true
+        }
+        return false
+    }
+
 }
 
 class QArray {

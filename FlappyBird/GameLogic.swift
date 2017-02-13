@@ -132,6 +132,9 @@ class GameLogic {
         isCollision = false
         isClear = false
         gameOver = false
+        //action = .NOTHING
+        dx = pipe1.pos - bird.right
+        dy = pipe1.low - bird.bottom
     }
     
     /**
@@ -181,12 +184,20 @@ class GameLogic {
         if enableAI {
             if agent.Q.history.keys.count == 0 {
                 oldState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
-                agent.Q.add(state: &oldState)
+                 agent.Q.add(state: &oldState)
             }
             newState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
             // new case, learn it
-            if !newState.isEqual(to: oldState) {
-                agent.learn(action: action, oldState: oldState, newState: &newState)
+            
+            for s in agent.Q.history.keys {
+                if s.isEqual1(to: oldState) {
+                    oldState = s
+                    break
+                }
+            }
+            
+            if !newState.isEqual1(to: oldState) {
+                 agent.learn(action: action, oldState: oldState, newState: &newState)
                 up.insert(oldState)
             }
             oldState = newState
@@ -327,6 +338,7 @@ class GameLogic {
             //通过归档时设置的关键字Checklist还原lists
             let array = unarchiver.decodeObject(forKey: "model_array") as! Array<StateActionSetModel>
             //var history = Dictionary<State, ActionSet>()
+            self.agent = Agent()
             for model in array {
                 agent.Q.history[model.getState()] = model.getActionSet()
                 //history[model.getState()] = model.getActionSet()
@@ -335,8 +347,8 @@ class GameLogic {
             //agent.Q.history = history
             //结束解码
             unarchiver.finishDecoding()
-            self.agent.Q.add(state: &oldState)
-            oldState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
+            //self.agent.Q.add(state: &oldState)
+            oldState = State()
             agent.Q.add(state: &oldState)
         }
     }
