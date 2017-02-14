@@ -53,11 +53,10 @@ class GameLogic {
 
 
     // objects
+    var displayLink: CADisplayLink!
     var bird = Bird(width: 40, height: 40)
     var pipe1: Pipe!
     var pipe2: Pipe!
-    var displayLink: CADisplayLink!
-    
     var agent = Agent()
 
     
@@ -113,7 +112,7 @@ class GameLogic {
     
     func resetBtnTapped() {
         gameInit()
-        agent.Q.history.removeAll()
+        agent = Agent()
         up.removeAll()
     }
     
@@ -135,6 +134,9 @@ class GameLogic {
         //action = .NOTHING
         dx = pipe1.pos - bird.right
         dy = pipe1.low - bird.bottom
+        
+       // oldState = State()
+        //newState = State()
     }
     
     /**
@@ -149,12 +151,7 @@ class GameLogic {
         GameLogic.SPEED = Double(slider.value)
         enableAI = sw.isOn
         
-        scoreLabel.text = String(score)
-        scoreLabel.sizeToFit()
-        scoreLabel.frame = CGRect(x: (UIScreen.main.bounds.size.width-scoreLabel.frame.size.width)/2, y: 100, width: scoreLabel.frame.size.width, height: scoreLabel.frame.size.height)
-        
-        maxLabel.text = "max: \(max)"
-        maxLabel.sizeToFit()
+        updateUI()
         
         if bird.left < pipe1.right && pipe1.pos < pipe2.pos {
             dx = pipe1.pos - bird.right
@@ -181,13 +178,13 @@ class GameLogic {
             print("current score: \(score)")
         }
 
+        
+        // Q learning state updating core logic
         if enableAI {
             if agent.Q.history.keys.count == 0 {
                 oldState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
                  agent.Q.add(state: &oldState)
             }
-            newState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
-            // new case, learn it
             
             for s in agent.Q.history.keys {
                 if s.isEqual1(to: oldState) {
@@ -196,16 +193,22 @@ class GameLogic {
                 }
             }
             
-            if !newState.isEqual1(to: oldState) {
-                 agent.learn(action: action, oldState: oldState, newState: &newState)
-                up.insert(oldState)
-            }
-            oldState = newState
             // if the agent decides to jump
             action = agent.decide(state: &oldState , bird: bird)
             if action == Action.JUMP {
                 bird.jump(at: JUMP_SPEED)
             }
+
+            
+            newState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
+            // new case, learn it
+            
+            
+            if !newState.isEqual1(to: oldState) {
+                 agent.learn(action: action, oldState: oldState, newState: &newState)
+                up.insert(oldState)
+            }
+            oldState = newState
         }
 
         
@@ -234,6 +237,15 @@ class GameLogic {
         groundMove()
         collisionDetect()
         // birdRotate()
+    }
+    
+    func updateUI() {
+        scoreLabel.text = String(score)
+        scoreLabel.sizeToFit()
+        scoreLabel.frame = CGRect(x: (UIScreen.main.bounds.size.width-scoreLabel.frame.size.width)/2, y: 100, width: scoreLabel.frame.size.width, height: scoreLabel.frame.size.height)
+        
+        maxLabel.text = "max: \(max)"
+        maxLabel.sizeToFit()
     }
     
     // TODO: finish the rotating action
@@ -303,6 +315,10 @@ class GameLogic {
     }
     
     
+}
+
+// extension: Save and Load
+extension GameLogic {
     func saveData() {
         let data = NSMutableData()
         //申明一个归档处理对象
@@ -323,7 +339,7 @@ class GameLogic {
     
     //读取数据
     func loadData() {
-        resetBtnTapped()
+        displayLink.invalidate()
         //获取本地数据文件地址
         let path = self.dataFilePath()
         //声明文件管理器
@@ -337,19 +353,19 @@ class GameLogic {
             let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
             //通过归档时设置的关键字Checklist还原lists
             let array = unarchiver.decodeObject(forKey: "model_array") as! Array<StateActionSetModel>
-            //var history = Dictionary<State, ActionSet>()
-            self.agent = Agent()
+            resetBtnTapped()
+            
             for model in array {
                 agent.Q.history[model.getState()] = model.getActionSet()
-                //history[model.getState()] = model.getActionSet()
             }
-//            agent.Q.history = unarchiver.decodeObject(forKey: "history") as! Dictionary<State, ActionSet>
-            //agent.Q.history = history
             //结束解码
             unarchiver.finishDecoding()
             //self.agent.Q.add(state: &oldState)
-            oldState = State()
-            agent.Q.add(state: &oldState)
+            //oldState = State()
+            //agent.Q.add(state: &oldState)
+            displayLink = CADisplayLink(target: self, selector: #selector(run))
+            displayLink.preferredFramesPerSecond = Int(FPS)
+            displayLink.add(to: .current, forMode: .defaultRunLoopMode)
         }
     }
     
@@ -365,4 +381,5 @@ class GameLogic {
     func dataFilePath() -> String{
         return self.documentsDirectory().appendingFormat("/userList.plist")
     }
+
 }
