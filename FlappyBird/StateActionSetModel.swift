@@ -29,6 +29,7 @@ class StateActionSetModel: NSObject, NSCoding {
         isCollision  = state.isCollision
         isDead = state.isDead
         isCleared = state.isCleared
+        py = state.py
         
         jump = actionSet.jump
         j_cnt = actionSet.j_cnt

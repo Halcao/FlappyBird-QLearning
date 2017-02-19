@@ -279,9 +279,7 @@ class GameLogic {
 
     }
     
-    /**
-        collision detect
-     */
+    // collision detect
     func collisionDetect() {
         gameOver = false
         if bird.right < pipe1.right && bird.right > pipe1.pos && (bird.top < pipe1.high || bird.bottom > pipe1.low ) {

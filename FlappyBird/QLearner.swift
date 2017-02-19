@@ -91,7 +91,8 @@ class State: NSObject, NSCopying {
         self.isCollision = isCollision
         self.isCleared = isCleared
         
-        if py < 512/3 {
+        // py < 512/3 ?
+        if y < 512/3 {
             self.py = 0
         } else if py < 512/2 {
             self.py = 1
