@@ -192,6 +192,15 @@ class GameLogic {
                     break
                 }
             }
+
+            newState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
+            
+            // new case, learn it
+            if !newState.isEqual1(to: oldState) {
+                 agent.learn(action: action, oldState: oldState, newState: &newState)
+                up.insert(oldState)
+            }
+            oldState = newState
             
             // if the agent decides to jump
             action = agent.decide(state: &oldState , bird: bird)
@@ -199,16 +208,6 @@ class GameLogic {
                 bird.jump(at: JUMP_SPEED)
             }
 
-            
-            newState = State(x: Int(dx), y: Int(dy), isJumping: bird.isJumping, isDead: gameOver, py: Int(bird.y), isCleared: isClear, isCollision: isCollision)
-            // new case, learn it
-            
-            
-            if !newState.isEqual1(to: oldState) {
-                 agent.learn(action: action, oldState: oldState, newState: &newState)
-                up.insert(oldState)
-            }
-            oldState = newState
         }
 
         
@@ -255,6 +254,7 @@ class GameLogic {
         let ratio =  1.0 - distance/height
         bird.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI_2*ratio))
     }
+    
     
     func pipeMove() {
         pipe1.pos -= PIPE_SPEED*dt
